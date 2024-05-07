@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setRespuesta, selectRespuestas } from "../../redux/questionnaireSlice";
+import { openModal, closeModal } from "../../redux/modalSlice";
+import ModalComponent from "../modal/Modal";
 
 const Questionnaire = () => {
   const dispatch = useDispatch();
   const respuestas = useSelector(selectRespuestas);
-  const [enviado, setEnviado] = useState(false);
+  const [enviado, setEnviado] = useState(false); // Estado local para rastrear si el formulario ha sido enviado
   const [cuestionarioId, setCuestionarioId] = useState(null);
 
   const handleChange = (preguntaId, respuesta) => {
@@ -24,10 +26,14 @@ const Questionnaire = () => {
       const response = await enviarCuestionario({ cuestionarioId, respuestas });
       if (response) {
         console.log("Cuestionario enviado exitosamente");
-        setEnviado(true);
+        dispatch(openModal()); 
+        setTimeout(() => {
+          dispatch(closeModal()); 
+        }, 2000);
         setTimeout(() => {
           window.location.reload(); 
-        }, 2000);
+        }, 10000);
+        setEnviado(true);
       } else {
         console.error("Error al enviar el cuestionario");
       }
@@ -56,7 +62,6 @@ const Questionnaire = () => {
       throw error;
     }
   };
-
   return (
     <div>
       <h1>Cuestionario de Salud en Enfermería</h1>
@@ -705,6 +710,7 @@ const Questionnaire = () => {
 
         <button type="submit">Enviar cuestionario</button>
       </form>
+      <ModalComponent/>
     </div>
   );
 };
