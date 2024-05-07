@@ -10,10 +10,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "connect-mongo": "^5.1.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "mongodb": "^6.6.0",
     "mongoose": "^8.3.3",
+    "mongoose-paginate-v2": "^1.8.0",
     "nodemon": "^3.1.0"
   }
 }

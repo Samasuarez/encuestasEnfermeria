@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2"
 
 const cuestionarioSchema = new mongoose.Schema({
-  cuestionarioId: { type: mongoose.Schema.Types.ObjectId, default: mongoose.Types.ObjectId },
-  usuario: { type: mongoose.Schema.Types.ObjectId, ref: 'Usuario' },
-  respuestas: [{ type: String, required: true }]
-});
+  respuestas: [{ type: String, required: true }],
+}); 
 
-const Cuestionario = mongoose.model('Cuestionario', cuestionarioSchema);
+cuestionarioSchema.plugin(mongoosePaginate);
+
+const Cuestionario = mongoose.model("Cuestionario", cuestionarioSchema);
 
 export default Cuestionario;

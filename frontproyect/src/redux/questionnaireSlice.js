@@ -1,28 +1,24 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
-export const enviarCuestionario = createAsyncThunk(
-  "questionnaire/enviarCuestionario",
-  async ({ usuarioId, respuestas }, thunkAPI) => {
-    try {
-      const response = await fetch("http://localhost:4000/api/cuestionario", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ usuarioId, respuestas }),
-      });
-      if (response.ok) {
-        return true;
-      } else {
-        throw new Error(
-          "Error al enviar el cuestionario: " + response.statusText
-        );
-      }
-    } catch (error) {
-      throw error;
-    }
+export const enviarCuestionario = async () => {
+  try {
+    const respuestas = obtenerRespuestasDelFormulario(); 
+
+    const response = await fetch('http://localhost:4000/api/cuestionario', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ respuestas }),
+    });
+
+    const data = await response.json();
+    console.log(data); 
+  } catch (error) {
+    console.error('Error al enviar el cuestionario:', error);
   }
-);
+};
+
 
 const questionnaireSlice = createSlice({
   name: "questionnaire",

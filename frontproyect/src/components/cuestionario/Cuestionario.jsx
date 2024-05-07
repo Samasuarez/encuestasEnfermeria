@@ -1,14 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setRespuesta,
-  selectRespuestas,
-  enviarCuestionario,
-} from "../../redux/questionnaireSlice";
+import { setRespuesta, selectRespuestas } from "../../redux/questionnaireSlice";
 
-const Questionnaire = ({ usuarioId }) => {
+const Questionnaire = () => {
   const dispatch = useDispatch();
   const respuestas = useSelector(selectRespuestas);
+  const [enviado, setEnviado] = useState(false);
+  const [cuestionarioId, setCuestionarioId] = useState(null);
 
   const handleChange = (preguntaId, respuesta) => {
     dispatch(setRespuesta({ preguntaId, respuesta }));
@@ -18,16 +16,44 @@ const Questionnaire = ({ usuarioId }) => {
     e.preventDefault();
 
     try {
-      const response = await dispatch(
-        enviarCuestionario({ usuarioId, respuestas })
-      );
+      if (!cuestionarioId) {
+        const nuevoId = generateUniqueId();
+        setCuestionarioId(nuevoId);
+      }
+
+      const response = await enviarCuestionario({ cuestionarioId, respuestas });
       if (response) {
         console.log("Cuestionario enviado exitosamente");
+        setEnviado(true);
+        setTimeout(() => {
+          window.location.reload(); 
+        }, 2000);
       } else {
         console.error("Error al enviar el cuestionario");
       }
     } catch (error) {
       console.error("Error al enviar el cuestionario:", error);
+    }
+  };
+
+  const generateUniqueId = () => {
+    return Math.random().toString(36).substr(2, 9);
+  };
+
+  const enviarCuestionario = async (data) => {
+    try {
+      const response = await fetch("http://localhost:4000/api/cuestionario", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      return response.json();
+    } catch (error) {
+      console.error("Error al enviar el cuestionario:", error);
+      throw error;
     }
   };
 

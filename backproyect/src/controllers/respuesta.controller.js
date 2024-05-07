@@ -2,17 +2,26 @@ import Cuestionario from "../models/respuesta.model.js";
 
 export const enviarRespuestas = async (req, res) => {
   try {
-    const { respuestas } = req.body;
+    console.log("Datos recibidos del cliente:", req.body);
+    const { cuestionarioId, respuestas } = req.body;
 
-    if (!respuestas || respuestas.length !== 10) {
-      return res
-        .status(400)
-        .json({
-          message: "Se requieren 10 respuestas para enviar el cuestionario.",
-        });
+    if (!respuestas || Object.keys(respuestas).length !== 10) {
+      return res.status(400).json({
+        message: "Se requieren 10 respuestas para enviar el cuestionario.",
+      });
     }
 
-    const nuevoCuestionario = await Cuestionario.create({ respuestas });
+    const respuestasArray = Object.values(respuestas);
+
+    const nuevoCuestionario = await Cuestionario.create({
+      cuestionarioId,
+      respuestas: respuestasArray,
+    });
+
+    console.log(
+      "Cuestionario guardado en la base de datos:",
+      nuevoCuestionario
+    );
 
     return res.status(201).json(nuevoCuestionario);
   } catch (error) {
